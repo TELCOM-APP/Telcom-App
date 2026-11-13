@@ -1,0 +1,21 @@
+{
+  "name": "TELCOM",
+  "short_name": "TELCOM",
+  "description": "Tous vos réseaux, une seule application.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b132b",
+  "theme_color": "#0b132b",
+  "icons": [
+    {
+      "src": "assets/logo-Splash.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/logo-Splash.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
