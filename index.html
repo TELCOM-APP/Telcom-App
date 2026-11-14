@@ -1,286 +1,177 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TELCOM - Application</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- LIAISON AVEC LA PWA -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0b132b">
-    <link rel="apple-touch-icon" href="assets/logo-Splash.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>TELCOM - Application</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0b132b">
+<link rel="apple-touch-icon" href="assets/logo-Splash.png">
 
-    <style>
-        :root {
-            --bg-color: #f8fafc;
-            --white: #ffffff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --border-color: #e2e8f0;
-            --kwetu-yellow: #f59e0b;
-            
-            --vodacom: #e60000;
-            --airtel: #ed1c24; 
-            --orange: #ff7900;
-            --africell: #9b1b6a; 
-            
-            --danger: #ef4444;
-            --success: #10b981;
-        }
+<style>
+:root{--bg-color:#f8fafc;--white:#fff;--text-main:#0f172a;--text-muted:#64748b;--border-color:#e2e8f0;--kwetu-yellow:#f59e0b;--vodacom:#e60000;--airtel:#ed1c24;--orange:#ff7900;--africell:#9b1b6a;--danger:#ef4444;--success:#10b981;--gap:15px}
+*{box-sizing:border-box;font-family:'Inter',sans-serif;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:#cbd5e1;display:flex;justify-content:center;align-items:center;min-height:100vh}
+#app-container{width:100%;max-width:414px;height:100vh;max-height:896px;background:var(--bg-color);box-shadow:0 10px 25px rgba(0,0,0,.1);position:relative;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column}
 
-        * {
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            padding: 0;
-            -webkit-tap-highlight-color: transparent;
-        }
+/* Splash */
+#splash-screen{position:fixed;inset:0;background:#0b132b;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:9999;transition:opacity .5s ease}
+.splash-logo{width:120px;height:120px;object-fit:contain;margin-bottom:20px}
+.splash-title{font-size:32px;font-weight:800;color:#a78bfa;margin-bottom:40px}
+.splash-powered{position:absolute;bottom:30px;font-size:14px;color:#94a3b8}
+.splash-powered strong{color:#a78bfa}
+.splash-hidden{opacity:0;pointer-events:none}
 
-        body {
-            background-color: #cbd5e1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
+/* Header */
+header{background:var(--white);padding:15px 20px;border-bottom:1px solid var(--border-color);position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between}
+.header-left{display:flex;align-items:center;gap:12px}
+.header-logo{width:40px;height:40px;object-fit:contain}
+.header-text h1{font-size:18px;font-weight:800;color:var(--text-main);line-height:1.2}
+.header-text p{font-size:11px;color:var(--text-muted);margin-top:2px}
+.header-text p strong{color:#8b5cf6}
 
-        /* --- VERSION MOBILE (Par défaut) --- */
-        #app-container {
-            width: 100%;
-            max-width: 414px;
-            height: 100vh;
-            max-height: 896px;
-            background-color: var(--bg-color);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            position: relative;
-            overflow-y: auto;
-            overflow-x: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: all 0.3s ease;
-        }
+/* Carrousel */
+#carousel-section{background:var(--white);padding:10px 15px 15px;border-bottom:1px solid var(--border-color);position:sticky;top:72px;z-index:99}
+#carousel-section.hidden{display:none}
+.carousel-container{width:100%;overflow:hidden;border-radius:16px;height:160px;background:#1a1a1a}
+.carousel-track{display:flex;gap:var(--gap);height:100%;transition:transform .6s ease-in-out;will-change:transform}
+.pub-slide{flex:0 0 100%;min-width:100%;height:100%;background:#1a1a1a;border-radius:16px;overflow:hidden;display:flex;justify-content:center;align-items:center}
+.pub-slide img{width:100%;height:100%;object-fit:contain;object-position:center;display:block}
+.carousel-dots{display:flex;justify-content:center;gap:6px;margin-top:10px}
+.dot{width:8px;height:8px;background:#cbd5e1;border-radius:50%;transition:all .3s}
+.dot.active{background:var(--text-main);width:24px;border-radius:4px}
+.kwetu-link-container{display:flex;justify-content:flex-end;margin-top:10px;padding-right:5px}
+.kwetu-link{font-size:11px;color:var(--text-muted);text-decoration:none;font-weight:600}
+.kwetu-link span{color:var(--kwetu-yellow)}
 
-        /* --- SPLASH SCREEN --- */
-        #splash-screen {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #0b132b; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; z-index: 9999;
-            transition: opacity 0.5s ease;
-        }
-        .splash-logo { width: 120px; height: 120px; object-fit: contain; margin-bottom: 20px; }
-        .splash-title { font-size: 32px; font-weight: 800; color: #a78bfa; margin-bottom: 40px; }
-        .splash-powered { position: absolute; bottom: 30px; font-size: 14px; color: #94a3b8; }
-        .splash-powered strong { color: #a78bfa; }
-        .splash-hidden { opacity: 0; pointer-events: none; }
+/* Pages */
+.page{display:none;padding:20px;flex:1;animation:fadeIn .3s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.page-title{font-size:18px;font-weight:700;margin-bottom:20px;color:var(--text-main)}
 
-        /* --- EN-TÊTE --- */
-        header {
-            background-color: var(--white); padding: 15px 20px;
-            border-bottom: 1px solid var(--border-color);
-            position: sticky; top: 0; z-index: 100;
-            display: flex; align-items: center; justify-content: space-between;
-        }
-        .header-left { display: flex; align-items: center; gap: 12px; }
-        .header-logo { width: 40px; height: 40px; object-fit: contain; }
-        .header-text h1 { font-size: 18px; font-weight: 800; color: var(--text-main); line-height: 1.2; }
-        .header-text p { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-        .header-text p strong { color: #8b5cf6; }
+.grid-operateurs{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:10px}
+.menu-btn{background:var(--white);border-radius:16px;padding:25px 15px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(0,0,0,.03);cursor:pointer;border:1.5px solid transparent;transition:transform .2s,box-shadow .2s}
+.menu-btn:hover{transform:translateY(-5px);box-shadow:0 8px 20px rgba(0,0,0,.08)}
+.logo-container{width:70px;height:70px;display:flex;justify-content:center;align-items:center;margin-bottom:12px}
+.logo-container img{max-width:100%;max-height:100%;object-fit:contain}
+.menu-btn .btn-text{font-weight:700;font-size:16px;color:var(--text-main)}
+.btn-vodacom,.btn-airtel{border-color:#fca5a5}
+.btn-orange{border-color:#fdba74}
+.btn-africell{border-color:#f9a8d4}
 
-        /* --- CARROUSEL --- */
-        #carousel-section {
-            background-color: var(--white); padding: 10px 15px 15px 15px;
-            border-bottom: 1px solid var(--border-color);
-            position: sticky; top: 72px; z-index: 99; transition: opacity 0.3s ease;
-        }
-        #carousel-section.hidden { display: none; }
+.top-bar{display:flex;align-items:center;margin-bottom:20px}
+.btn-back{background:var(--white);border:1px solid var(--border-color);padding:8px 12px;border-radius:8px;color:var(--text-main);font-weight:600;font-size:14px;cursor:pointer}
+.action-card{background:var(--white);padding:16px;border-radius:12px;margin-bottom:12px;box-shadow:0 2px 4px rgba(0,0,0,.02);cursor:pointer;border:1px solid var(--border-color);transition:border-color .2s}
+.action-card:hover{border-color:var(--text-main)}
+.action-card h3{font-size:15px;color:var(--text-main);margin-bottom:4px}
+.action-card p{font-size:12px;color:var(--text-muted)}
 
-        .carousel-container { 
-            width: 100%; 
-            overflow: hidden; 
-            border-radius: 16px; 
-            height: 160px; 
-        }
+/* Formulaire */
+.form-group{margin-bottom:15px}
+.form-group label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text-main)}
+.form-group input{width:100%;padding:12px;border:1px solid var(--border-color);border-radius:8px;font-size:14px;background:var(--white)}
+.form-group input:focus{outline:none;border-color:var(--text-main)}
+.file-upload-wrapper{border:2px dashed var(--border-color);border-radius:8px;padding:15px;text-align:center;background:var(--bg-color);position:relative}
+.file-upload-wrapper input[type=file]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.file-upload-text{font-size:13px;color:var(--text-muted);pointer-events:none}
+.preview-container{display:flex;gap:10px;margin-top:10px}
+.img-preview{width:60px;height:60px;border-radius:8px;object-fit:cover;border:1px solid var(--border-color);display:none}
+.btn-primary{width:100%;background:var(--text-main);color:#fff;border:none;padding:16px;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;margin-top:10px;transition:background .2s}
+.btn-primary:hover{background:#334155}
+.error-msg{color:var(--danger);font-size:12px;margin-top:5px;display:none;font-weight:600}
 
-        .carousel-track { 
-            display: flex; 
-            transition: transform 0.6s ease-in-out; 
-            gap: 15px; 
-            height: 100%; 
-        }
+/* Succès */
+.success-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:100%;padding:20px}
+.success-icon{width:80px;height:80px;background:#dcfce7;color:var(--success);border-radius:50%;display:flex;justify-content:center;align-items:center;font-size:40px;margin-bottom:20px}
+.success-screen h2{color:var(--text-main);margin-bottom:10px;font-size:22px}
+.success-screen p{color:var(--text-muted);font-size:14px;line-height:1.5;margin-bottom:20px}
+.btn-email{width:100%;background:#ea4335;color:#fff;border:none;padding:14px;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;margin-top:10px;display:flex;justify-content:center;align-items:center;gap:8px}
 
-        .pub-slide {
-            flex: 0 0 100%; 
-            height: 100%; 
-            background-color: #1a1a1a;
-            border-radius: 16px; 
-            overflow: hidden; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+/* Historique */
+.history-empty{background:var(--white);border:1px solid var(--border-color);border-radius:16px;padding:40px 20px;text-align:center;box-shadow:0 4px 10px rgba(0,0,0,.03)}
+.history-empty .empty-icon{font-size:42px;margin-bottom:12px}
+.history-empty h3{font-size:16px;color:var(--text-main);margin-bottom:6px}
+.history-empty p{font-size:13px;color:var(--text-muted);line-height:1.5}
+.history-card{background:var(--white);border:1px solid var(--border-color);border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:0 4px 10px rgba(0,0,0,.03)}
+.history-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.history-service{font-size:15px;font-weight:700;color:var(--text-main)}
+.history-date{font-size:12px;color:var(--text-muted);margin-top:4px}
+.history-number{font-size:12px;color:var(--text-muted);margin-top:2px}
+.badge{background:#dcfce7;color:#047857;font-size:11px;font-weight:700;padding:5px 10px;border-radius:20px;white-space:nowrap}
+.btn-clear{background:transparent;border:1px solid var(--border-color);color:var(--text-muted);padding:10px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;width:100%;margin-top:6px}
 
-        .pub-slide img { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: contain; 
-            display: block;
-        }
+/* Profil */
+.profile-card{background:var(--white);border:1px solid var(--border-color);border-radius:16px;padding:24px 20px;text-align:center;box-shadow:0 4px 10px rgba(0,0,0,.04);margin-bottom:16px}
+.avatar{width:84px;height:84px;border-radius:50%;background:linear-gradient(135deg,#0b132b,#8b5cf6);color:#fff;font-size:30px;font-weight:800;display:flex;justify-content:center;align-items:center;margin:0 auto 14px}
+.profile-name{font-size:18px;font-weight:700;color:var(--text-main)}
+.profile-phone{font-size:13px;color:var(--text-muted);margin-top:4px}
+.option-card{background:var(--white);border:1px solid var(--border-color);border-radius:14px;margin-bottom:12px;box-shadow:0 2px 6px rgba(0,0,0,.03);overflow:hidden}
+.option-row{display:flex;align-items:center;justify-content:space-between;padding:16px;cursor:pointer;font-size:14px;font-weight:600;color:var(--text-main);width:100%;background:none;border:none;text-align:left}
+.option-row .chev{color:var(--text-muted);transition:transform .2s}
+.option-card.open .chev{transform:rotate(90deg)}
+.option-body{display:none;padding:0 16px 16px;border-top:1px solid var(--border-color);padding-top:14px}
+.option-card.open .option-body{display:block}
+.option-body p{font-size:13px;color:var(--text-muted);line-height:1.6}
+.help-link{display:inline-block;margin-top:10px;font-size:13px;font-weight:700;color:#047857;text-decoration:none}
+.btn-logout{width:100%;background:var(--white);color:var(--danger);border:1px solid #fecaca;padding:14px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;margin-top:4px}
+.save-ok{display:none;color:var(--success);font-size:12px;font-weight:600;margin-top:8px}
 
-        .carousel-dots { display: flex; justify-content: center; gap: 6px; margin-top: 10px; }
-        .dot { width: 8px; height: 8px; background-color: #cbd5e1; border-radius: 50%; transition: all 0.3s; }
-        .dot.active { background-color: var(--text-main); width: 24px; border-radius: 4px; }
+/* Navigation bas */
+.bottom-nav{background:var(--white);display:flex;justify-content:space-around;padding:12px 0;border-top:1px solid var(--border-color);margin-top:auto;position:sticky;bottom:0;z-index:100}
+.nav-item{text-align:center;color:var(--text-muted);font-size:11px;font-weight:600;cursor:pointer;flex:1}
+.nav-item.active{color:var(--text-main)}
+.nav-item span{display:block;font-size:22px;margin-bottom:2px}
 
-        .kwetu-link-container { display: flex; justify-content: flex-end; margin-top: 10px; padding-right: 5px; }
-        .kwetu-link { font-size: 11px; color: var(--text-muted); text-decoration: none; font-weight: 600; }
-        .kwetu-link span { color: var(--kwetu-yellow); }
+/* Modale PWA */
+#install-modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;justify-content:center;align-items:center;z-index:1000}
+#install-modal.show{display:flex}
+.modal-content{background:var(--white);padding:25px;border-radius:16px;text-align:center;width:80%;max-width:300px}
+.modal-content h3{margin-bottom:10px;color:var(--text-main)}
+.modal-content p{font-size:13px;color:var(--text-muted);margin-bottom:20px}
+.modal-buttons{display:flex;gap:10px}
+.btn-modal{flex:1;padding:10px;border-radius:8px;border:none;font-weight:600;cursor:pointer}
+.btn-cancel{background:#e2e8f0;color:var(--text-main)}
+.btn-install{background:var(--text-main);color:#fff}
 
-        /* --- PAGES --- */
-        .page { display: none; padding: 20px; flex: 1; animation: fadeIn 0.3s ease; }
-        .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .page-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; color: var(--text-main); }
-
-        /* --- GRILLE OPÉRATEURS --- */
-        .grid-operateurs { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
-        .menu-btn {
-            background: var(--white); border-radius: 16px; padding: 25px 15px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03); cursor: pointer; border: 1.5px solid transparent;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .menu-btn:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
-        
-        .logo-container { width: 70px; height: 70px; display: flex; justify-content: center; align-items: center; margin-bottom: 12px; }
-        .logo-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .menu-btn .btn-text { font-weight: 700; font-size: 16px; color: var(--text-main); }
-
-        .btn-vodacom { border-color: #fca5a5; } 
-        .btn-airtel { border-color: #fca5a5; } 
-        .btn-orange { border-color: #fdba74; } 
-        .btn-africell { border-color: #f9a8d4; } 
-
-        /* --- MENUS OPÉRATEURS --- */
-        .top-bar { display: flex; align-items: center; margin-bottom: 20px; }
-        .btn-back {
-            background: var(--white); border: 1px solid var(--border-color); padding: 8px 12px;
-            border-radius: 8px; color: var(--text-main); font-weight: 600; font-size: 14px; cursor: pointer;
-        }
-        .action-card {
-            background: var(--white); padding: 16px; border-radius: 12px; margin-bottom: 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02); cursor: pointer; border: 1px solid var(--border-color);
-            transition: border-color 0.2s;
-        }
-        .action-card:hover { border-color: var(--text-main); }
-        .action-card h3 { font-size: 15px; color: var(--text-main); margin-bottom: 4px;}
-        .action-card p { font-size: 12px; color: var(--text-muted);}
-
-        /* --- FORMULAIRES --- */
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text-main); }
-        .form-group input { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px; background: var(--white);}
-        .form-group input:focus { outline: none; border-color: var(--text-main); }
-
-        .file-upload-wrapper {
-            border: 2px dashed var(--border-color); border-radius: 8px; padding: 15px; text-align: center;
-            background: var(--bg-color); position: relative;
-        }
-        .file-upload-wrapper input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-        .file-upload-text { font-size: 13px; color: var(--text-muted); pointer-events: none; }
-        .preview-container { display: flex; gap: 10px; margin-top: 10px; }
-        .img-preview { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border-color); display: none; }
-
-        .btn-primary {
-            width: 100%; background-color: var(--text-main); color: white; border: none; padding: 16px;
-            border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px;
-            transition: background 0.2s;
-        }
-        .btn-primary:hover { background-color: #334155; }
-        .error-msg { color: var(--danger); font-size: 12px; margin-top: 5px; display: none; font-weight: 600; }
-
-        /* --- SUCCÈS --- */
-        .success-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; height: 100%; padding: 20px; }
-        .success-icon { width: 80px; height: 80px; background: #dcfce7; color: var(--success); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 40px; margin-bottom: 20px; }
-        .success-screen h2 { color: var(--text-main); margin-bottom: 10px; font-size: 22px;}
-        .success-screen p { color: var(--text-muted); font-size: 14px; line-height: 1.5; margin-bottom: 20px;}
-        
-        .btn-email {
-            width: 100%; background-color: #ea4335; color: white; border: none; padding: 14px;
-            border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px;
-            display: flex; justify-content: center; align-items: center; gap: 8px;
-        }
-
-        /* --- NAV BAS --- */
-        .bottom-nav {
-            background: var(--white); display: flex; justify-content: space-around;
-            padding: 12px 0; border-top: 1px solid var(--border-color); margin-top: auto;
-        }
-        .nav-item { text-align: center; color: var(--text-muted); font-size: 11px; font-weight: 600; cursor: pointer; }
-        .nav-item.active { color: var(--text-main); }
-        .nav-item span { display: block; font-size: 22px; margin-bottom: 2px; }
-
-        /* --- MODALE INSTALLATION --- */
-        #install-modal {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center;
-            z-index: 1000;
-        }
-        #install-modal.show { display: flex; }
-        .modal-content {
-            background: var(--white); padding: 25px; border-radius: 16px; text-align: center;
-            width: 80%; max-width: 300px;
-        }
-        .modal-content h3 { margin-bottom: 10px; color: var(--text-main); }
-        .modal-content p { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
-        .modal-buttons { display: flex; gap: 10px; }
-        .btn-modal { flex: 1; padding: 10px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; }
-        .btn-cancel { background: #e2e8f0; color: var(--text-main); }
-        .btn-install { background: var(--text-main); color: white; }
-
-        /* ========================================= */
-        /* --- VERSION ORDINATEUR (Media Query) --- */
-        /* ========================================= */
-        @media (min-width: 768px) {
-            body { background-color: #0f172a; }
-            #app-container { max-width: 1200px; height: 90vh; max-height: none; border-radius: 24px; }
-            header { padding: 20px 40px; }
-            #carousel-section { padding: 20px 40px; top: 84px; }
-            .pub-slide { height: 250px; }
-            .carousel-track { gap: 20px; }
-            .kwetu-link { font-size: 14px; }
-            .page { padding: 40px; }
-            .page-title { font-size: 24px; margin-bottom: 30px; text-align: center; }
-            .grid-operateurs { grid-template-columns: repeat(4, 1fr); gap: 30px; max-width: 900px; margin: 0 auto; }
-            .menu-btn { padding: 40px 20px; }
-            .logo-container { width: 100px; height: 100px; }
-            .menu-btn .btn-text { font-size: 18px; }
-            #page-vodacom, #page-airtel, #page-orange, #page-africell, #page-form, #page-success { max-width: 800px; margin: 0 auto; width: 100%; }
-            .action-card { padding: 25px; }
-            .action-card h3 { font-size: 18px; }
-            .action-card p { font-size: 14px; }
-            .bottom-nav { padding: 20px 0; justify-content: center; gap: 50px; }
-            .nav-item { font-size: 14px; }
-            .nav-item span { font-size: 28px; display: inline-block; margin-right: 10px; margin-bottom: 0;}
-        }
-    </style>
+@media (min-width:768px){
+ :root{--gap:20px}
+ body{background:#0f172a}
+ #app-container{max-width:1200px;height:90vh;max-height:none;border-radius:24px}
+ header{padding:20px 40px}
+ #carousel-section{padding:20px 40px;top:84px}
+ .carousel-container{height:250px}
+ .kwetu-link{font-size:14px}
+ .page{padding:40px}
+ .page-title{font-size:24px;margin-bottom:30px;text-align:center}
+ .grid-operateurs{grid-template-columns:repeat(4,1fr);gap:30px;max-width:900px;margin:0 auto}
+ .menu-btn{padding:40px 20px}
+ .logo-container{width:100px;height:100px}
+ .menu-btn .btn-text{font-size:18px}
+ #page-vodacom,#page-airtel,#page-orange,#page-africell,#page-form,#page-success,#page-historique,#page-profil{max-width:800px;margin:0 auto;width:100%}
+ .action-card{padding:25px}
+ .action-card h3{font-size:18px}
+ .action-card p{font-size:14px}
+ .bottom-nav{padding:20px 0;justify-content:center;gap:50px}
+ .nav-item{font-size:14px;flex:none}
+ .nav-item span{font-size:28px;display:inline-block;margin-right:10px;margin-bottom:0}
+}
+</style>
 </head>
 <body>
 
-<!-- SPLASH SCREEN -->
 <div id="splash-screen">
-    <img src="assets/logo-Splash.png" alt="Logo TELCOM" class="splash-logo">
+    <img src="assets/logo-Splash.png" alt="Logo TELCOM" class="splash-logo" onerror="this.style.display='none'">
     <div class="splash-title">TELCOM</div>
     <div class="splash-powered">Powered by <strong>Mr Augusto</strong></div>
 </div>
 
 <div id="app-container">
-    
-    <!-- EN-TÊTE -->
+
     <header>
         <div class="header-left">
-            <img src="assets/logo-Splash.png" alt="Logo" class="header-logo">
+            <img src="assets/logo-Splash.png" alt="Logo" class="header-logo" onerror="this.style.display='none'">
             <div class="header-text">
                 <h1>TELCOM</h1>
                 <p>Powered by <strong>Mr Augusto</strong></p>
@@ -288,7 +179,6 @@
         </div>
     </header>
 
-    <!-- CARROUSEL -->
     <div id="carousel-section">
         <div class="carousel-container">
             <div class="carousel-track" id="carouselTrack">
@@ -300,17 +190,13 @@
                 <div class="pub-slide"><img src="assets/pub-6.png" alt="Pub 6"></div>
             </div>
         </div>
-        
         <div class="carousel-dots" id="carouselDots"></div>
-
         <div class="kwetu-link-container">
-            <a href="https://cascades-za-kwetu-app.netlify.app/" target="_blank" class="kwetu-link">
-                Ouvrir Kwetu <span>🎁</span>
-            </a>
+            <a href="https://cascades-za-kwetu-app.netlify.app/" target="_blank" class="kwetu-link">Ouvrir Kwetu <span>🎁</span></a>
         </div>
     </div>
 
-    <!-- ================= PAGE ACCUEIL ================= -->
+    <!-- ACCUEIL -->
     <div id="page-accueil" class="page active">
         <h2 class="page-title">Choisissez un opérateur</h2>
         <div class="grid-operateurs">
@@ -333,47 +219,46 @@
         </div>
     </div>
 
-    <!-- ================= PAGE VODACOM ================= -->
+    <!-- VODACOM -->
     <div id="page-vodacom" class="page">
         <div class="top-bar"><button class="btn-back" onclick="navigate('page-accueil')">← Retour</button></div>
-        <h2 class="page-title" style="color: var(--vodacom); text-align: left;">Services Vodacom</h2>
-        <div class="action-card" onclick="showForm('Création VODA-E', 'standard')"><h3>Création VODA-E</h3><p>Configuration des paramètres.</p></div>
-        <div class="action-card" onclick="showForm('Création M-PESA', 'standard')"><h3>Création M-PESA</h3><p>Ouverture de compte.</p></div>
-        <div class="action-card" onclick="showForm('Migration VodaCom', 'standard')"><h3>Migration</h3><p>Changement d'offre.</p></div>
+        <h2 class="page-title" style="color:var(--vodacom);text-align:left;">Services Vodacom</h2>
+        <div class="action-card" onclick="showForm('Création VODA-E','standard')"><h3>Création VODA-E</h3><p>Configuration des paramètres.</p></div>
+        <div class="action-card" onclick="showForm('Création M-PESA','standard')"><h3>Création M-PESA</h3><p>Ouverture de compte.</p></div>
+        <div class="action-card" onclick="showForm('Migration VodaCom','standard')"><h3>Migration</h3><p>Changement d'offre.</p></div>
     </div>
 
-    <!-- ================= PAGE AIRTEL ================= -->
+    <!-- AIRTEL -->
     <div id="page-airtel" class="page">
         <div class="top-bar"><button class="btn-back" onclick="navigate('page-accueil')">← Retour</button></div>
-        <h2 class="page-title" style="color: var(--airtel); text-align: left;">Services Airtel</h2>
-        <div class="action-card" onclick="showForm('Création SICO (Compte Agent)', 'standard')"><h3>Bouton 1 : Création SICO</h3><p>Compte Agent.</p></div>
-        <div class="action-card" onclick="showForm('Création FLASH (MV)', 'standard')"><h3>Bouton 2 : Création FLASH (MV)</h3><p>Configuration Flash.</p></div>
-        <div class="action-card" onclick="showForm('Agrandissement de compte & Changement ID', 'standard')"><h3>Bouton 3 : Agrandissement</h3><p>Compte et changement d'identité.</p></div>
-        <div class="action-card" onclick="showForm('SWAP Airtel', 'swap_airtel')"><h3>Bouton 4 : SWAP</h3><p>Échange de carte SIM.</p></div>
+        <h2 class="page-title" style="color:var(--airtel);text-align:left;">Services Airtel</h2>
+        <div class="action-card" onclick="showForm('Création SICO (Compte Agent)','standard')"><h3>Bouton 1 : Création SICO</h3><p>Compte Agent.</p></div>
+        <div class="action-card" onclick="showForm('Création FLASH (MV)','standard')"><h3>Bouton 2 : Création FLASH (MV)</h3><p>Configuration Flash.</p></div>
+        <div class="action-card" onclick="showForm('Agrandissement de compte & Changement ID','standard')"><h3>Bouton 3 : Agrandissement</h3><p>Compte et changement d'identité.</p></div>
+        <div class="action-card" onclick="showForm('SWAP Airtel','swap_airtel')"><h3>Bouton 4 : SWAP</h3><p>Échange de carte SIM.</p></div>
     </div>
 
-    <!-- ================= PAGE ORANGE ================= -->
+    <!-- ORANGE -->
     <div id="page-orange" class="page">
         <div class="top-bar"><button class="btn-back" onclick="navigate('page-accueil')">← Retour</button></div>
-        <h2 class="page-title" style="color: var(--orange); text-align: left;">Services Orange</h2>
-        <div class="action-card" onclick="showForm('SICO Orange', 'sico_orange')"><h3>SICO</h3><p>Demande de carte SIM.</p></div>
-        <div class="action-card" onclick="showForm('KAABU Orange', 'standard')"><h3>KAABU</h3><p>Options et services.</p></div>
-        <div class="action-card" onclick="showForm('ZEBRA Orange', 'standard')"><h3>ZEBRA</h3><p>Demande de SIM Flash.</p></div>
+        <h2 class="page-title" style="color:var(--orange);text-align:left;">Services Orange</h2>
+        <div class="action-card" onclick="showForm('SICO Orange','sico_orange')"><h3>SICO</h3><p>Demande de carte SIM.</p></div>
+        <div class="action-card" onclick="showForm('KAABU Orange','standard')"><h3>KAABU</h3><p>Options et services.</p></div>
+        <div class="action-card" onclick="showForm('ZEBRA Orange','standard')"><h3>ZEBRA</h3><p>Demande de SIM Flash.</p></div>
     </div>
 
-    <!-- ================= PAGE AFRICELL ================= -->
+    <!-- AFRICELL -->
     <div id="page-africell" class="page">
         <div class="top-bar"><button class="btn-back" onclick="navigate('page-accueil')">← Retour</button></div>
-        <h2 class="page-title" style="color: var(--africell); text-align: left;">Services Africell</h2>
-        <div class="action-card" onclick="showForm('Création Flash Africell', 'standard')"><h3>Création Flash</h3><p>Configuration SIM Flash.</p></div>
+        <h2 class="page-title" style="color:var(--africell);text-align:left;">Services Africell</h2>
+        <div class="action-card" onclick="showForm('Création Flash Africell','standard')"><h3>Création Flash</h3><p>Configuration SIM Flash.</p></div>
     </div>
 
-    <!-- ================= PAGE FORMULAIRE ================= -->
+    <!-- FORMULAIRE -->
     <div id="page-form" class="page">
         <div class="top-bar"><button class="btn-back" onclick="navigate('page-accueil')">← Annuler</button></div>
-        <h2 id="form-title" class="page-title" style="text-align: left;">Titre</h2>
+        <h2 id="form-title" class="page-title" style="text-align:left;">Titre</h2>
         <form id="requestForm" onsubmit="submitForm(event)">
-            
             <div class="form-group" id="group-phone">
                 <label>Numéro de téléphone</label>
                 <input type="tel" id="phone" placeholder="Ex: 0812345678" maxlength="10">
@@ -387,74 +272,107 @@
                 <label>Prénom</label>
                 <input type="text" id="prenom" placeholder="Votre prénom">
             </div>
-
-            <div class="form-group" id="group-iccid" style="display: none;">
+            <div class="form-group" id="group-iccid" style="display:none;">
                 <label>Numéro ICCID (20 chiffres)</label>
                 <input type="text" id="iccid" placeholder="Ex: 89243000000000000000" maxlength="20">
                 <div class="error-msg" id="iccid-error">L'ICCID doit contenir 20 chiffres.</div>
             </div>
-            
-            <div class="form-group" id="group-nn" style="display: none;">
+            <div class="form-group" id="group-nn" style="display:none;">
                 <label>NN</label>
                 <input type="text" id="nn" placeholder="NN">
             </div>
-
-            <div class="form-group" id="group-passeport" style="display: none;">
+            <div class="form-group" id="group-passeport" style="display:none;">
                 <label>Photo Passeport</label>
                 <div class="file-upload-wrapper">
-                    <input type="file" accept="image/*" id="photo-passeport" onchange="previewImage(this, 'preview-passeport')">
+                    <input type="file" accept="image/*" id="photo-passeport" onchange="previewImage(this,'preview-passeport')">
                     <div class="file-upload-text">📸 Toucher pour insérer</div>
                 </div>
-                <div class="preview-container"><img src="" id="preview-passeport" class="img-preview"></div>
+                <div class="preview-container"><img src="" id="preview-passeport" class="img-preview" alt=""></div>
             </div>
-
-            <div class="form-group" id="group-electeur" style="display: none;">
+            <div class="form-group" id="group-electeur" style="display:none;">
                 <label>Photo Carte d'électeur</label>
                 <div class="file-upload-wrapper">
-                    <input type="file" accept="image/*" id="photo-electeur" onchange="previewImage(this, 'preview-electeur')">
+                    <input type="file" accept="image/*" id="photo-electeur" onchange="previewImage(this,'preview-electeur')">
                     <div class="file-upload-text">📸 Toucher pour insérer</div>
                 </div>
-                <div class="preview-container"><img src="" id="preview-electeur" class="img-preview"></div>
+                <div class="preview-container"><img src="" id="preview-electeur" class="img-preview" alt=""></div>
             </div>
-
-            <div class="form-group" id="group-identite" style="display: none;">
+            <div class="form-group" id="group-identite" style="display:none;">
                 <label>Photo Pièce d'identité</label>
                 <div class="file-upload-wrapper">
-                    <input type="file" accept="image/*" id="photo-identite" onchange="previewImage(this, 'preview-identite')">
+                    <input type="file" accept="image/*" id="photo-identite" onchange="previewImage(this,'preview-identite')">
                     <div class="file-upload-text">📸 Toucher pour insérer</div>
                 </div>
-                <div class="preview-container"><img src="" id="preview-identite" class="img-preview"></div>
+                <div class="preview-container"><img src="" id="preview-identite" class="img-preview" alt=""></div>
             </div>
-
             <button type="submit" class="btn-primary">Soumettre ma demande</button>
         </form>
     </div>
 
-    <!-- ================= PAGE SUCCÈS ================= -->
+    <!-- SUCCÈS -->
     <div id="page-success" class="page">
         <div class="success-screen">
             <div class="success-icon">✓</div>
             <h2>Demande Transmise !</h2>
             <p>Votre demande a été préparée et s'ouvre sur WhatsApp.<br><br><strong>N'oubliez pas d'envoyer le message et de joindre vos photos !</strong></p>
-            
-            <button class="btn-email" onclick="sendEmail()">
-                ✉️ Envoyer aussi par Email
-            </button>
-            
-            <button class="btn-primary" style="margin-top: 15px; background-color: transparent; border: 1px solid #cbd5e1; color: #64748b;" onclick="navigate('page-accueil')">Retour à l'accueil</button>
+            <button class="btn-email" onclick="sendEmail()">✉️ Envoyer aussi par Email</button>
+            <button class="btn-primary" style="margin-top:15px;background:transparent;border:1px solid #cbd5e1;color:#64748b;" onclick="navigate('page-accueil')">Retour à l'accueil</button>
         </div>
+    </div>
+
+    <!-- HISTORIQUE -->
+    <div id="page-historique" class="page">
+        <h2 class="page-title" style="text-align:left;">Historique</h2>
+        <div id="history-list"></div>
+    </div>
+
+    <!-- PROFIL -->
+    <div id="page-profil" class="page">
+        <h2 class="page-title" style="text-align:left;">Profil</h2>
+
+        <div class="profile-card">
+            <div class="avatar" id="profile-avatar">UT</div>
+            <div class="profile-name" id="profile-name">Utilisateur TELCOM</div>
+            <div class="profile-phone" id="profile-phone">Numéro non renseigné</div>
+        </div>
+
+        <div class="option-card" id="opt-info">
+            <button class="option-row" onclick="toggleOption('opt-info')">👤 Mes informations <span class="chev">›</span></button>
+            <div class="option-body">
+                <div class="form-group">
+                    <label>Nom complet</label>
+                    <input type="text" id="profile-input-name" placeholder="Utilisateur TELCOM">
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label>Numéro de téléphone</label>
+                    <input type="tel" id="profile-input-phone" placeholder="Ex: 0812345678" maxlength="10">
+                    <div class="error-msg" id="profile-phone-error">Le numéro doit contenir 10 chiffres.</div>
+                </div>
+                <button class="btn-primary" onclick="saveProfile()">Enregistrer</button>
+                <div class="save-ok" id="profile-saved">✓ Informations enregistrées</div>
+            </div>
+        </div>
+
+        <div class="option-card" id="opt-help">
+            <button class="option-row" onclick="toggleOption('opt-help')">❓ Centre d'aide <span class="chev">›</span></button>
+            <div class="option-body">
+                <p>Une question sur une demande ? Contactez l'administrateur TELCOM sur WhatsApp, nous vous répondons dès que possible.</p>
+                <a class="help-link" id="help-link" href="#" target="_blank" rel="noopener">Contacter le support WhatsApp</a>
+            </div>
+        </div>
+
+        <button class="btn-logout" onclick="logout()">Déconnexion</button>
     </div>
 
     <!-- NAVIGATION BAS -->
     <div class="bottom-nav">
         <div class="nav-item active" id="nav-accueil" onclick="navigate('page-accueil')"><span>🏠</span> Accueil</div>
-        <div class="nav-item" onclick="alert('Historique à venir')"><span>📋</span> Historique</div>
-        <div class="nav-item" onclick="alert('Profil à venir')"><span>👤</span> Profil</div>
+        <div class="nav-item" id="nav-historique" onclick="navigate('page-historique')"><span>📋</span> Historique</div>
+        <div class="nav-item" id="nav-profil" onclick="navigate('page-profil')"><span>👤</span> Profil</div>
     </div>
 
 </div>
 
-<!-- MODALE INSTALLATION -->
 <div id="install-modal">
     <div class="modal-content">
         <h3>Installer TELCOM</h3>
@@ -467,219 +385,316 @@
 </div>
 
 <script>
-    // --- SÉCURITÉ ANTI-BLOCAGE ---
-    // Ce code force la disparition du Splash Screen après 2.5 secondes, même si une erreur survient.
+/* ===== SPLASH : disparaît après 2,5 s quoi qu'il arrive (timer lancé immédiatement) ===== */
+function hideSplash() {
+    const splash = document.getElementById('splash-screen');
+    if (!splash || splash.dataset.done) return;
+    splash.dataset.done = '1';
+    splash.classList.add('splash-hidden');
+    setTimeout(() => { splash.style.display = 'none'; }, 500);
+}
+setTimeout(hideSplash, 2500);
+
+const WHATSAPP_NUMBER = "243971464219";
+const EMAIL_ADDRESS = "espoirbashongafrancois124@gmail.com";
+const HISTORY_KEY = 'telcom_history';
+const PROFILE_KEY = 'telcom_profile';
+
+let currentMessage = "";
+let currentSubject = "";
+let deferredPrompt;
+
+/* ===== Stockage sécurisé ===== */
+function readStore(key, fallback) {
+    try { const v = JSON.parse(localStorage.getItem(key)); return v ?? fallback; }
+    catch (e) { return fallback; }
+}
+function writeStore(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { console.log('Stockage indisponible', e); }
+}
+function esc(str) {
+    return String(str ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ===== PWA ===== */
+if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        setTimeout(() => {
-            const splash = document.getElementById('splash-screen');
-            if (splash) {
-                splash.classList.add('splash-hidden');
-                setTimeout(() => splash.style.display = 'none', 500);
-            }
-        }, 2500);
+        navigator.serviceWorker.register('sw.js')
+            .then(r => console.log('Service Worker enregistré:', r.scope))
+            .catch(e => console.log('Échec du Service Worker:', e));
     });
+}
 
-    // --- CONFIGURATION DES DESTINATAIRES ---
-    const WHATSAPP_NUMBER = "243971464219"; 
-    const EMAIL_ADDRESS = "espoirbashongafrancois124@gmail.com"; 
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    setTimeout(() => document.getElementById('install-modal').classList.add('show'), 3000);
+});
 
-    let currentMessage = "";
-    let currentSubject = "";
-    let deferredPrompt; 
-
-    // --- ENREGISTREMENT DU SERVICE WORKER (PWA) ---
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js')
-                .then(registration => console.log('Service Worker enregistré:', registration.scope))
-                .catch(error => console.log('Échec du Service Worker:', error));
-        });
+function triggerInstall() {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(() => { deferredPrompt = null; closeModal(); });
+    } else {
+        alert("Pour installer l'application sur iPhone : appuyez sur le bouton 'Partager' en bas de Safari, puis sur 'Sur l'écran d'accueil'.");
+        closeModal();
     }
+}
+function closeModal() { document.getElementById('install-modal').classList.remove('show'); }
 
-    // --- CAPTURE DE L'ÉVÉNEMENT D'INSTALLATION ---
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        setTimeout(() => {
-            document.getElementById('install-modal').classList.add('show');
-        }, 3000);
-    });
-
-    function triggerInstall() {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    console.log('L\'utilisateur a accepté l\'installation');
-                } else {
-                    console.log('L\'utilisateur a refusé l\'installation');
-                }
-                deferredPrompt = null;
-                closeModal();
-            });
-        } else {
-            alert("Pour installer l'application sur iPhone : appuyez sur le bouton 'Partager' en bas de Safari, puis sur 'Sur l'écran d'accueil'.");
-            closeModal();
-        }
-    }
-
-    function closeModal() {
-        document.getElementById('install-modal').classList.remove('show');
-    }
-
-    // --- CARROUSEL DYNAMIQUE ---
-    let currentSlide = 0;
+/* ===== CARROUSEL ===== */
+function initCarousel() {
     const track = document.getElementById('carouselTrack');
     const dotsContainer = document.getElementById('carouselDots');
-    const slides = document.querySelectorAll('.pub-slide');
-    const totalSlides = slides.length;
+    if (!track || !dotsContainer) return;
 
-    if (track && totalSlides > 0) {
-        track.style.width = `${totalSlides * 100}%`;
+    const slides = track.querySelectorAll('.pub-slide');
+    const total = slides.length;
+    if (!total) return;
 
-        for (let i = 0; i < totalSlides; i++) {
-            const dot = document.createElement('div');
-            dot.classList.add('dot');
-            if (i === 0) dot.classList.add('active');
-            dotsContainer.appendChild(dot);
-        }
-        const dots = document.querySelectorAll('.dot');
+    // Image manquante : on affiche un fond propre au lieu d'une image cassée
+    slides.forEach(slide => {
+        const img = slide.querySelector('img');
+        if (img) img.addEventListener('error', () => { img.style.visibility = 'hidden'; });
+    });
 
-        setInterval(() => {
-            currentSlide = (currentSlide + 1) % totalSlides;
-            const slideWidth = document.querySelector('.pub-slide').offsetWidth + 15; 
-            track.style.transform = `translateX(-${currentSlide * slideWidth}px)`;
-            
-            dots.forEach((dot, index) => {
-                dot.classList.toggle('active', index === currentSlide);
-            });
-        }, 7000); 
+    dotsContainer.innerHTML = '';
+    for (let i = 0; i < total; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'dot' + (i === 0 ? ' active' : '');
+        dotsContainer.appendChild(dot);
+    }
+    const dots = dotsContainer.querySelectorAll('.dot');
+
+    let current = 0;
+    function goTo(index) {
+        current = index;
+        // Chaque slide = 100% du conteneur + l'espace (gap) entre les slides
+        track.style.transform = `translateX(calc(${-current * 100}% - ${current} * var(--gap)))`;
+        dots.forEach((d, i) => d.classList.toggle('active', i === current));
+    }
+    goTo(0);
+
+    // Défilement toutes les 7 s, indépendant du chargement des images
+    setInterval(() => goTo((current + 1) % total), 7000);
+}
+
+/* ===== NAVIGATION ===== */
+function navigate(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const target = document.getElementById(pageId);
+    if (target) {
+        target.classList.add('active');
+        document.getElementById('app-container').scrollTop = 0;
     }
 
-    // --- NAVIGATION ---
-    function navigate(pageId) {
-        const pages = document.querySelectorAll('.page');
-        pages.forEach(page => page.classList.remove('active'));
-        
-        const targetPage = document.getElementById(pageId);
-        if(targetPage) {
-            targetPage.classList.add('active');
-            document.getElementById('app-container').scrollTop = 0;
-        }
+    document.getElementById('carousel-section').classList.toggle('hidden', pageId !== 'page-accueil');
 
-        const carousel = document.getElementById('carousel-section');
-        if (pageId === 'page-accueil') {
-            carousel.classList.remove('hidden');
-        } else {
-            carousel.classList.add('hidden');
-        }
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    if (pageId === 'page-historique') {
+        document.getElementById('nav-historique').classList.add('active');
+        renderHistory();
+    } else if (pageId === 'page-profil') {
+        document.getElementById('nav-profil').classList.add('active');
+        renderProfile();
+    } else {
+        document.getElementById('nav-accueil').classList.add('active');
+    }
+}
 
-        const navItems = document.querySelectorAll('.nav-item');
-        navItems.forEach(item => item.classList.remove('active'));
-        if (pageId === 'page-accueil' || pageId.includes('page-vodacom') || pageId.includes('page-airtel') || pageId.includes('page-orange') || pageId.includes('page-africell') || pageId === 'page-form' || pageId === 'page-success') {
-            document.getElementById('nav-accueil').classList.add('active');
+/* ===== FORMULAIRE ===== */
+function showForm(title, type) {
+    document.getElementById('form-title').innerText = title;
+    document.querySelectorAll('.form-group').forEach(g => g.style.display = 'none');
+
+    document.getElementById('requestForm').reset();
+    document.querySelectorAll('.img-preview').forEach(img => img.style.display = 'none');
+    document.querySelectorAll('.error-msg').forEach(err => err.style.display = 'none');
+    document.querySelectorAll('input').forEach(input => input.style.borderColor = '#e2e8f0');
+
+    const show = id => document.getElementById(id).style.display = 'block';
+
+    if (type === 'standard') {
+        ['group-phone','group-nom','group-prenom','group-electeur'].forEach(show);
+    } else if (type === 'sico_orange') {
+        ['group-iccid','group-nom','group-prenom','group-electeur','group-passeport'].forEach(show);
+    } else if (type === 'swap_airtel') {
+        ['group-iccid','group-nn','group-identite'].forEach(show);
+    }
+    navigate('page-form');
+}
+
+function previewImage(input, previewId) {
+    const preview = document.getElementById(previewId);
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => { preview.src = e.target.result; preview.style.display = 'block'; };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function submitForm(event) {
+    event.preventDefault();
+
+    const phoneGroup = document.getElementById('group-phone');
+    if (phoneGroup.style.display !== 'none') {
+        const phoneVal = document.getElementById('phone').value.trim();
+        if (!/^[0-9]{10}$/.test(phoneVal)) {
+            document.getElementById('phone-error').style.display = 'block';
+            document.getElementById('phone').style.borderColor = 'var(--danger)';
+            return;
         }
     }
 
-    // --- FORMULAIRES ---
-    function showForm(title, type) {
-        document.getElementById('form-title').innerText = title;
-        
-        const allGroups = document.querySelectorAll('.form-group');
-        allGroups.forEach(g => g.style.display = 'none');
-        
-        document.getElementById('requestForm').reset();
-        document.querySelectorAll('.img-preview').forEach(img => img.style.display = 'none');
-        document.querySelectorAll('.error-msg').forEach(err => err.style.display = 'none');
-        document.querySelectorAll('input').forEach(input => input.style.borderColor = '#e2e8f0');
-
-        if (type === 'standard') {
-            document.getElementById('group-phone').style.display = 'block';
-            document.getElementById('group-nom').style.display = 'block';
-            document.getElementById('group-prenom').style.display = 'block';
-            document.getElementById('group-electeur').style.display = 'block';
-        } 
-        else if (type === 'sico_orange') {
-            document.getElementById('group-iccid').style.display = 'block';
-            document.getElementById('group-nom').style.display = 'block';
-            document.getElementById('group-prenom').style.display = 'block';
-            document.getElementById('group-electeur').style.display = 'block';
-            document.getElementById('group-passeport').style.display = 'block';
-        }
-        else if (type === 'swap_airtel') {
-            document.getElementById('group-iccid').style.display = 'block';
-            document.getElementById('group-nn').style.display = 'block';
-            document.getElementById('group-identite').style.display = 'block';
-        }
-
-        navigate('page-form');
-    }
-
-    function previewImage(input, previewId) {
-        const preview = document.getElementById(previewId);
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                preview.src = e.target.result;
-                preview.style.display = 'block';
-            }
-            reader.readAsDataURL(input.files[0]);
+    const iccidGroup = document.getElementById('group-iccid');
+    if (iccidGroup.style.display !== 'none') {
+        const iccidVal = document.getElementById('iccid').value.trim();
+        if (!/^[0-9]{20}$/.test(iccidVal)) {
+            document.getElementById('iccid-error').style.display = 'block';
+            document.getElementById('iccid').style.borderColor = 'var(--danger)';
+            return;
         }
     }
 
-    function submitForm(event) {
-        event.preventDefault();
+    const formTitle = document.getElementById('form-title').innerText;
+    const nom = document.getElementById('nom').value;
+    const prenom = document.getElementById('prenom').value;
+    let contactInfo = "";
+    let numero = "";
 
-        const phoneGroup = document.getElementById('group-phone');
-        if (phoneGroup.style.display !== 'none') {
-            const phoneVal = document.getElementById('phone').value.trim();
-            if (!/^[0-9]{10}$/.test(phoneVal)) {
-                document.getElementById('phone-error').style.display = 'block';
-                document.getElementById('phone').style.borderColor = 'var(--danger)';
-                return;
-            }
-        }
-
-        const iccidGroup = document.getElementById('group-iccid');
-        if (iccidGroup.style.display !== 'none') {
-            const iccidVal = document.getElementById('iccid').value.trim();
-            if (!/^[0-9]{20}$/.test(iccidVal)) {
-                document.getElementById('iccid-error').style.display = 'block';
-                document.getElementById('iccid').style.borderColor = 'var(--danger)';
-                return;
-            }
-        }
-
-        const formTitle = document.getElementById('form-title').innerText;
-        const nom = document.getElementById('nom').value;
-        const prenom = document.getElementById('prenom').value;
-        let contactInfo = "";
-        
-        if (phoneGroup.style.display !== 'none') contactInfo += `*Téléphone :* ${document.getElementById('phone').value}\n`;
-        if (document.getElementById('group-iccid').style.display !== 'none') contactInfo += `*ICCID :* ${document.getElementById('iccid').value}\n`;
-        if (document.getElementById('group-nn').style.display !== 'none') contactInfo += `*NN :* ${document.getElementById('nn').value}\n`;
-
-        currentSubject = `Nouvelle Demande TELCOM - ${formTitle}`;
-        currentMessage = `*NOUVELLE DEMANDE TELCOM*\n\n` +
-                         `*Service :* ${formTitle}\n` +
-                         `*Nom :* ${nom}\n` +
-                         `*Prénom :* ${prenom}\n` +
-                         contactInfo + `\n` +
-                         `_Note : L'utilisateur doit joindre ses photos manuellement._`;
-
-        const encodedMessage = encodeURIComponent(currentMessage);
-        window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
-
-        setTimeout(() => {
-            navigate('page-success');
-        }, 1000);
+    if (phoneGroup.style.display !== 'none') {
+        numero = document.getElementById('phone').value;
+        contactInfo += `*Téléphone :* ${numero}\n`;
+    }
+    if (iccidGroup.style.display !== 'none') {
+        const iccid = document.getElementById('iccid').value;
+        if (!numero) numero = iccid;
+        contactInfo += `*ICCID :* ${iccid}\n`;
+    }
+    if (document.getElementById('group-nn').style.display !== 'none') {
+        contactInfo += `*NN :* ${document.getElementById('nn').value}\n`;
     }
 
-    function sendEmail() {
-        const encodedSubject = encodeURIComponent(currentSubject);
-        const encodedBody = encodeURIComponent(currentMessage);
-        window.location.href = `mailto:${EMAIL_ADDRESS}?subject=${encodedSubject}&body=${encodedBody}`;
+    currentSubject = `Nouvelle Demande TELCOM - ${formTitle}`;
+    currentMessage = `*NOUVELLE DEMANDE TELCOM*\n\n` +
+                     `*Service :* ${formTitle}\n` +
+                     `*Nom :* ${nom}\n` +
+                     `*Prénom :* ${prenom}\n` +
+                     contactInfo + `\n` +
+                     `_Note : L'utilisateur doit joindre ses photos manuellement._`;
+
+    // Sauvegarde dans l'historique AVANT l'ouverture de WhatsApp
+    const history = readStore(HISTORY_KEY, []);
+    history.unshift({
+        service: formTitle,
+        nom: nom,
+        prenom: prenom,
+        numero: numero,
+        statut: 'Demande transmise',
+        timestamp: Date.now()
+    });
+    writeStore(HISTORY_KEY, history);
+
+    window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(currentMessage)}`;
+
+    setTimeout(() => navigate('page-success'), 1000);
+}
+
+function sendEmail() {
+    window.location.href = `mailto:${EMAIL_ADDRESS}?subject=${encodeURIComponent(currentSubject)}&body=${encodeURIComponent(currentMessage)}`;
+}
+
+/* ===== HISTORIQUE ===== */
+function formatDate(ts, fallback) {
+    if (!ts) return fallback || '';
+    return new Date(ts).toLocaleString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+function renderHistory() {
+    const container = document.getElementById('history-list');
+    const history = readStore(HISTORY_KEY, []);
+
+    if (!Array.isArray(history) || history.length === 0) {
+        container.innerHTML = `
+            <div class="history-empty">
+                <div class="empty-icon">📭</div>
+                <h3>Aucune demande pour le moment</h3>
+                <p>Vos demandes apparaîtront ici.</p>
+            </div>`;
+        return;
     }
+
+    container.innerHTML = history.map(item => `
+        <div class="history-card">
+            <div class="history-top">
+                <div>
+                    <div class="history-service">${esc(item.service)}</div>
+                    <div class="history-date">${esc(formatDate(item.timestamp, item.date))}</div>
+                    ${item.numero ? `<div class="history-number">N° ${esc(item.numero)}</div>` : ''}
+                </div>
+                <span class="badge">${esc(item.statut || 'Demande transmise')}</span>
+            </div>
+        </div>`).join('') +
+        `<button class="btn-clear" onclick="clearHistory()">Effacer l'historique</button>`;
+}
+
+function clearHistory() {
+    if (confirm("Voulez-vous vraiment effacer tout l'historique ?")) {
+        try { localStorage.removeItem(HISTORY_KEY); } catch (e) {}
+        renderHistory();
+    }
+}
+
+/* ===== PROFIL ===== */
+function getInitials(name) {
+    const parts = String(name).trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) return 'UT';
+    return (parts[0][0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
+}
+
+function renderProfile() {
+    const profile = readStore(PROFILE_KEY, {});
+    const name = profile.name || 'Utilisateur TELCOM';
+    document.getElementById('profile-name').textContent = name;
+    document.getElementById('profile-avatar').textContent = getInitials(name);
+    document.getElementById('profile-phone').textContent = profile.phone || 'Numéro non renseigné';
+    document.getElementById('profile-input-name').value = profile.name || '';
+    document.getElementById('profile-input-phone').value = profile.phone || '';
+    document.getElementById('help-link').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Bonjour, j'ai besoin d'aide avec l'application TELCOM.")}`;
+}
+
+function toggleOption(id) {
+    document.getElementById(id).classList.toggle('open');
+}
+
+function saveProfile() {
+    const name = document.getElementById('profile-input-name').value.trim();
+    const phone = document.getElementById('profile-input-phone').value.trim();
+    const err = document.getElementById('profile-phone-error');
+    const ok = document.getElementById('profile-saved');
+
+    if (phone && !/^[0-9]{10}$/.test(phone)) {
+        err.style.display = 'block';
+        ok.style.display = 'none';
+        return;
+    }
+    err.style.display = 'none';
+    writeStore(PROFILE_KEY, { name, phone });
+    renderProfile();
+    ok.style.display = 'block';
+    setTimeout(() => ok.style.display = 'none', 2500);
+}
+
+function logout() {
+    // Aucune action pour le moment
+}
+
+/* ===== INITIALISATION ===== */
+document.addEventListener('DOMContentLoaded', () => {
+    initCarousel();
+    renderHistory();
+    renderProfile();
+});
 </script>
 
 </body>
