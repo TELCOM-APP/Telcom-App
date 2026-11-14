@@ -467,6 +467,18 @@
 </div>
 
 <script>
+    // --- SÉCURITÉ ANTI-BLOCAGE ---
+    // Ce code force la disparition du Splash Screen après 2.5 secondes, même si une erreur survient.
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            const splash = document.getElementById('splash-screen');
+            if (splash) {
+                splash.classList.add('splash-hidden');
+                setTimeout(() => splash.style.display = 'none', 500);
+            }
+        }, 2500);
+    });
+
     // --- CONFIGURATION DES DESTINATAIRES ---
     const WHATSAPP_NUMBER = "243971464219"; 
     const EMAIL_ADDRESS = "espoirbashongafrancois124@gmail.com"; 
@@ -515,13 +527,6 @@
         document.getElementById('install-modal').classList.remove('show');
     }
 
-    // --- SPLASH SCREEN ---
-    setTimeout(() => {
-        const splash = document.getElementById('splash-screen');
-        splash.classList.add('splash-hidden');
-        setTimeout(() => splash.style.display = 'none', 500);
-    }, 2500);
-
     // --- CARROUSEL DYNAMIQUE ---
     let currentSlide = 0;
     const track = document.getElementById('carouselTrack');
@@ -529,25 +534,27 @@
     const slides = document.querySelectorAll('.pub-slide');
     const totalSlides = slides.length;
 
-    track.style.width = `${totalSlides * 100}%`;
+    if (track && totalSlides > 0) {
+        track.style.width = `${totalSlides * 100}%`;
 
-    for (let i = 0; i < totalSlides; i++) {
-        const dot = document.createElement('div');
-        dot.classList.add('dot');
-        if (i === 0) dot.classList.add('active');
-        dotsContainer.appendChild(dot);
+        for (let i = 0; i < totalSlides; i++) {
+            const dot = document.createElement('div');
+            dot.classList.add('dot');
+            if (i === 0) dot.classList.add('active');
+            dotsContainer.appendChild(dot);
+        }
+        const dots = document.querySelectorAll('.dot');
+
+        setInterval(() => {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            const slideWidth = document.querySelector('.pub-slide').offsetWidth + 15; 
+            track.style.transform = `translateX(-${currentSlide * slideWidth}px)`;
+            
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentSlide);
+            });
+        }, 7000); 
     }
-    const dots = document.querySelectorAll('.dot');
-
-    setInterval(() => {
-        currentSlide = (currentSlide + 1) % totalSlides;
-        const slideWidth = document.querySelector('.pub-slide').offsetWidth + 15; 
-        track.style.transform = `translateX(-${currentSlide * slideWidth}px)`;
-        
-        dots.forEach((dot, index) => {
-            dot.classList.toggle('active', index === currentSlide);
-        });
-    }, 7000); 
 
     // --- NAVIGATION ---
     function navigate(pageId) {
