@@ -601,4 +601,79 @@
         }
         else if (type === 'swap_airtel') {
             document.getElementById('group-iccid').style.display = 'block';
-            document.getElementById('group-nn').style.display = 'block
+            document.getElementById('group-nn').style.display = 'block';
+            document.getElementById('group-identite').style.display = 'block';
+        }
+
+        navigate('page-form');
+    }
+
+    function previewImage(input, previewId) {
+        const preview = document.getElementById(previewId);
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function submitForm(event) {
+        event.preventDefault();
+
+        const phoneGroup = document.getElementById('group-phone');
+        if (phoneGroup.style.display !== 'none') {
+            const phoneVal = document.getElementById('phone').value.trim();
+            if (!/^[0-9]{10}$/.test(phoneVal)) {
+                document.getElementById('phone-error').style.display = 'block';
+                document.getElementById('phone').style.borderColor = 'var(--danger)';
+                return;
+            }
+        }
+
+        const iccidGroup = document.getElementById('group-iccid');
+        if (iccidGroup.style.display !== 'none') {
+            const iccidVal = document.getElementById('iccid').value.trim();
+            if (!/^[0-9]{20}$/.test(iccidVal)) {
+                document.getElementById('iccid-error').style.display = 'block';
+                document.getElementById('iccid').style.borderColor = 'var(--danger)';
+                return;
+            }
+        }
+
+        const formTitle = document.getElementById('form-title').innerText;
+        const nom = document.getElementById('nom').value;
+        const prenom = document.getElementById('prenom').value;
+        let contactInfo = "";
+        
+        if (phoneGroup.style.display !== 'none') contactInfo += `*Téléphone :* ${document.getElementById('phone').value}\n`;
+        if (document.getElementById('group-iccid').style.display !== 'none') contactInfo += `*ICCID :* ${document.getElementById('iccid').value}\n`;
+        if (document.getElementById('group-nn').style.display !== 'none') contactInfo += `*NN :* ${document.getElementById('nn').value}\n`;
+
+        currentSubject = `Nouvelle Demande TELCOM - ${formTitle}`;
+        currentMessage = `*NOUVELLE DEMANDE TELCOM*\n\n` +
+                         `*Service :* ${formTitle}\n` +
+                         `*Nom :* ${nom}\n` +
+                         `*Prénom :* ${prenom}\n` +
+                         contactInfo + `\n` +
+                         `_Note : L'utilisateur doit joindre ses photos manuellement._`;
+
+        const encodedMessage = encodeURIComponent(currentMessage);
+        window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
+
+        setTimeout(() => {
+            navigate('page-success');
+        }, 1000);
+    }
+
+    function sendEmail() {
+        const encodedSubject = encodeURIComponent(currentSubject);
+        const encodedBody = encodeURIComponent(currentMessage);
+        window.location.href = `mailto:${EMAIL_ADDRESS}?subject=${encodedSubject}&body=${encodedBody}`;
+    }
+</script>
+
+</body>
+</html>
