@@ -96,31 +96,38 @@
         #carousel-section.hidden { display: none; }
 
         .carousel-container { 
-    width: 100%; 
-    overflow: hidden; 
-    border-radius: 16px; 
-    height: 160px; 
-}
+            width: 100%; 
+            overflow: hidden; 
+            border-radius: 16px; 
+            height: 160px; 
+        }
 
-.carousel-track { 
-    display: flex; 
-    transition: transform 0.6s ease-in-out; 
-    gap: 15px; 
-    height: 100%; 
-}
+        .carousel-track { 
+            display: flex; 
+            transition: transform 0.6s ease-in-out; 
+            gap: 15px; 
+            height: 100%; 
+        }
 
-.pub-slide {
-    flex: 0 0 100%; 
-    height: 100%; 
-    background-color: #1a1a1a;
-    border-radius: 16px; 
-    overflow: hidden; 
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    /* On utilise le background pour centrer l'image sans la déformer */
-    background-size: contain; 
-    background-position: center; 
-    background-repeat: no-repeat;
-}
+        .pub-slide {
+            flex: 0 0 100%; 
+            height: 100%; 
+            background-color: #1a1a1a;
+            border-radius: 16px; 
+            overflow: hidden; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pub-slide img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: contain; 
+            display: block;
+        }
+
         .carousel-dots { display: flex; justify-content: center; gap: 6px; margin-top: 10px; }
         .dot { width: 8px; height: 8px; background-color: #cbd5e1; border-radius: 50%; transition: all 0.3s; }
         .dot.active { background-color: var(--text-main); width: 24px; border-radius: 4px; }
@@ -285,12 +292,12 @@
     <div id="carousel-section">
         <div class="carousel-container">
             <div class="carousel-track" id="carouselTrack">
-                <div class="pub-slide" style="background-image: url('assets/pub-1.png');"></div>
-<div class="pub-slide" style="background-image: url('assets/pub-2.png');"></div>
-<div class="pub-slide" style="background-image: url('assets/pub-3.png');"></div>
-<div class="pub-slide" style="background-image: url('assets/pub-4.png');"></div>
-<div class="pub-slide" style="background-image: url('assets/pub-5.png');"></div>
-<div class="pub-slide" style="background-image: url('assets/pub-6.png');"></div>
+                <div class="pub-slide"><img src="assets/pub-1.png" alt="Pub 1"></div>
+                <div class="pub-slide"><img src="assets/pub-2.png" alt="Pub 2"></div>
+                <div class="pub-slide"><img src="assets/pub-3.png" alt="Pub 3"></div>
+                <div class="pub-slide"><img src="assets/pub-4.png" alt="Pub 4"></div>
+                <div class="pub-slide"><img src="assets/pub-5.png" alt="Pub 5"></div>
+                <div class="pub-slide"><img src="assets/pub-6.png" alt="Pub 6"></div>
             </div>
         </div>
         
@@ -466,35 +473,29 @@
 
     let currentMessage = "";
     let currentSubject = "";
-    let deferredPrompt; // Variable pour stocker l'événement d'installation
+    let deferredPrompt; 
 
     // --- ENREGISTREMENT DU SERVICE WORKER (PWA) ---
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('sw.js')
-                .then(registration => console.log('Service Worker enregistré avec succès:', registration.scope))
-                .catch(error => console.log('Échec de l\'enregistrement du Service Worker:', error));
+                .then(registration => console.log('Service Worker enregistré:', registration.scope))
+                .catch(error => console.log('Échec du Service Worker:', error));
         });
     }
 
     // --- CAPTURE DE L'ÉVÉNEMENT D'INSTALLATION ---
     window.addEventListener('beforeinstallprompt', (e) => {
-        // Empêche l'affichage de la mini-infobar sur mobile
         e.preventDefault();
-        // Stocke l'événement pour pouvoir le déclencher plus tard
         deferredPrompt = e;
-        // Affiche notre propre modale personnalisée après 3 secondes
         setTimeout(() => {
             document.getElementById('install-modal').classList.add('show');
         }, 3000);
     });
 
-    // --- FONCTION POUR DECLENCHER L'INSTALLATION NATIVE ---
     function triggerInstall() {
         if (deferredPrompt) {
-            // Affiche la vraie pop-up d'installation du navigateur
             deferredPrompt.prompt();
-            // Attend le choix de l'utilisateur
             deferredPrompt.userChoice.then((choiceResult) => {
                 if (choiceResult.outcome === 'accepted') {
                     console.log('L\'utilisateur a accepté l\'installation');
@@ -505,7 +506,6 @@
                 closeModal();
             });
         } else {
-            // Si le navigateur ne supporte pas (ex: Safari sur iOS), on affiche un message d'instruction
             alert("Pour installer l'application sur iPhone : appuyez sur le bouton 'Partager' en bas de Safari, puis sur 'Sur l'écran d'accueil'.");
             closeModal();
         }
@@ -601,79 +601,4 @@
         }
         else if (type === 'swap_airtel') {
             document.getElementById('group-iccid').style.display = 'block';
-            document.getElementById('group-nn').style.display = 'block';
-            document.getElementById('group-identite').style.display = 'block';
-        }
-
-        navigate('page-form');
-    }
-
-    function previewImage(input, previewId) {
-        const preview = document.getElementById(previewId);
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                preview.src = e.target.result;
-                preview.style.display = 'block';
-            }
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-
-    function submitForm(event) {
-        event.preventDefault();
-
-        const phoneGroup = document.getElementById('group-phone');
-        if (phoneGroup.style.display !== 'none') {
-            const phoneVal = document.getElementById('phone').value.trim();
-            if (!/^[0-9]{10}$/.test(phoneVal)) {
-                document.getElementById('phone-error').style.display = 'block';
-                document.getElementById('phone').style.borderColor = 'var(--danger)';
-                return;
-            }
-        }
-
-        const iccidGroup = document.getElementById('group-iccid');
-        if (iccidGroup.style.display !== 'none') {
-            const iccidVal = document.getElementById('iccid').value.trim();
-            if (!/^[0-9]{20}$/.test(iccidVal)) {
-                document.getElementById('iccid-error').style.display = 'block';
-                document.getElementById('iccid').style.borderColor = 'var(--danger)';
-                return;
-            }
-        }
-
-        const formTitle = document.getElementById('form-title').innerText;
-        const nom = document.getElementById('nom').value;
-        const prenom = document.getElementById('prenom').value;
-        let contactInfo = "";
-        
-        if (phoneGroup.style.display !== 'none') contactInfo += `*Téléphone :* ${document.getElementById('phone').value}\n`;
-        if (document.getElementById('group-iccid').style.display !== 'none') contactInfo += `*ICCID :* ${document.getElementById('iccid').value}\n`;
-        if (document.getElementById('group-nn').style.display !== 'none') contactInfo += `*NN :* ${document.getElementById('nn').value}\n`;
-
-        currentSubject = `Nouvelle Demande TELCOM - ${formTitle}`;
-        currentMessage = `*NOUVELLE DEMANDE TELCOM*\n\n` +
-                         `*Service :* ${formTitle}\n` +
-                         `*Nom :* ${nom}\n` +
-                         `*Prénom :* ${prenom}\n` +
-                         contactInfo + `\n` +
-                         `_Note : L'utilisateur doit joindre ses photos manuellement._`;
-
-        const encodedMessage = encodeURIComponent(currentMessage);
-        window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
-
-        setTimeout(() => {
-            navigate('page-success');
-        }, 1000);
-    }
-
-    function sendEmail() {
-        const encodedSubject = encodeURIComponent(currentSubject);
-        const encodedBody = encodeURIComponent(currentMessage);
-        window.location.href = `mailto:${EMAIL_ADDRESS}?subject=${encodedSubject}&body=${encodedBody}`;
-    }
-</script>
-
-</body>
-</html>
+            document.getElementById('group-nn').style.display = 'block
